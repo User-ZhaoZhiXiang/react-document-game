@@ -1,4 +1,4 @@
-/** bookmarks: 选择一个 key */
+/** bookmarks: 1.在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)；未完成 */
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
@@ -86,7 +86,8 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([
         {
-          squares: squares
+          squares: squares,
+          coordinate: getCoordinate(i)
         }
       ]),
       stepNumber: history.length,
@@ -105,9 +106,11 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-
+    console.log("history--", history);
     const moves = history.map((step, move) => {
-      const desc = move ? "Go to move #" + move : "Go to game start";
+      const desc = move
+        ? `Go to move (${step.coordinate.y},${step.coordinate.x}) #` + move
+        : "Go to game start";
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
@@ -158,4 +161,29 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function getCoordinate(val) {
+  switch (val) {
+    case 0:
+      return { x: 1, y: 1 };
+    case 1:
+      return { x: 1, y: 2 };
+    case 2:
+      return { x: 1, y: 3 };
+    case 3:
+      return { x: 2, y: 1 };
+    case 4:
+      return { x: 2, y: 2 };
+    case 5:
+      return { x: 2, y: 3 };
+    case 6:
+      return { x: 3, y: 1 };
+    case 7:
+      return { x: 3, y: 2 };
+    case 8:
+      return { x: 3, y: 3 };
+    default:
+      return { x: 0, y: 0 };
+  }
 }
