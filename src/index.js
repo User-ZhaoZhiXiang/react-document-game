@@ -1,4 +1,7 @@
-/** bookmarks: 1.在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)；未完成 */
+/** Bookmarks:
+ * 1.在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)；已完成√
+ * 2.在历史记录列表中加粗显示当前选择的项目；已完成√
+ **/
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
@@ -102,6 +105,21 @@ class Game extends React.Component {
     });
   }
 
+  showPiecesOnGameBoard(history, index) {
+    if (!history[index].coordinate) {
+      return;
+    }
+    let elList = document.getElementsByClassName("square");
+    elList[getIndex(history[index].coordinate)].className += " current";
+  }
+
+  hidePiecesOnGameBoard() {
+    let elList = document.getElementsByClassName("square");
+    for (let i = 0; i < elList.length; i++) {
+      elList[i].className = "square";
+    }
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -113,7 +131,13 @@ class Game extends React.Component {
         : "Go to game start";
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button
+            onClick={() => this.jumpTo(move)}
+            onMouseEnter={() => this.showPiecesOnGameBoard(history, move)}
+            onMouseLeave={() => this.hidePiecesOnGameBoard()}
+          >
+            {desc}
+          </button>
         </li>
       );
     });
@@ -186,4 +210,42 @@ function getCoordinate(val) {
     default:
       return { x: 0, y: 0 };
   }
+}
+
+function getIndex(val) {
+  if (val.x === 1) {
+    switch (val.y) {
+      case 1:
+        return 0;
+      case 2:
+        return 1;
+      case 3:
+        return 2;
+      default:
+        return null;
+    }
+  } else if (val.x === 2) {
+    switch (val.y) {
+      case 1:
+        return 3;
+      case 2:
+        return 4;
+      case 3:
+        return 5;
+      default:
+        return null;
+    }
+  } else if (val.x === 3) {
+    switch (val.y) {
+      case 1:
+        return 6;
+      case 2:
+        return 7;
+      case 3:
+        return 8;
+      default:
+        return null;
+    }
+  }
+  return null;
 }
