@@ -1,6 +1,7 @@
 /** Bookmarks:
  * 1.在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)；已完成√
  * 2.在历史记录列表中加粗显示当前选择的项目；已完成√
+ * 3.使用两个循环来渲染出棋盘的格子；已完成√
  **/
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -29,6 +30,17 @@ function Square(props) {
 }
 
 class Board extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      elementArr: [
+        { val: 0, list: [0, 1, 2] },
+        { val: 3, list: [3, 4, 5] },
+        { val: 6, list: [6, 7, 8] }
+      ]
+    };
+  }
+
   renderSquare(i) {
     return (
       <Square
@@ -43,8 +55,16 @@ class Board extends React.Component {
   render() {
     return (
       <div>
-        {/* <div className="status"></div> */}
-        <div className="board-row">
+        {this.state.elementArr.map((item, index) => {
+          return (
+            <div className="board-row" key={index}>
+              {item.list.map(subList => {
+                return this.renderSquare(subList);
+              })}
+            </div>
+          );
+        })}
+        {/* <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
           {this.renderSquare(2)}
@@ -58,7 +78,7 @@ class Board extends React.Component {
           {this.renderSquare(6)}
           {this.renderSquare(7)}
           {this.renderSquare(8)}
-        </div>
+        </div> */}
       </div>
     );
   }
