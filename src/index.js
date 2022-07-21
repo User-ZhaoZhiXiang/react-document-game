@@ -44,6 +44,7 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => {
           this.props.onClick(i);
@@ -64,21 +65,6 @@ class Board extends React.Component {
             </div>
           );
         })}
-        {/* <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div> */}
       </div>
     );
   }
@@ -94,25 +80,33 @@ class Game extends React.Component {
         }
       ],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      isAsc: true
     };
   }
 
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
-    const current = history[history.length - 1];
+    const current = this.state.isAsc ? history[history.length - 1] : history[0];
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
     this.setState({
-      history: history.concat([
-        {
-          squares: squares,
-          coordinate: getCoordinate(i)
-        }
-      ]),
+      history: this.state.isAsc
+        ? history.concat([
+            {
+              squares: squares,
+              coordinate: getCoordinate(i)
+            }
+          ])
+        : [
+            {
+              squares: squares,
+              coordinate: getCoordinate(i)
+            }
+          ].concat(history),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext
     });
@@ -140,27 +134,19 @@ class Game extends React.Component {
     }
   }
 
+  reverseSort() {
+    this.setState({
+      isAsc: !this.state.isAsc,
+      history: this.state.history.slice().reverse()
+    });
+  }
+
   render() {
     const history = this.state.history;
-    const current = history[this.state.stepNumber];
+    const current = this.state.isAsc
+      ? history[this.state.stepNumber]
+      : history[0];
     const winner = calculateWinner(current.squares);
-    console.log("history--", history);
-    const moves = history.map((step, move) => {
-      const desc = move
-        ? `Go to move (${step.coordinate.y},${step.coordinate.x}) #` + move
-        : "Go to game start";
-      return (
-        <li key={move}>
-          <button
-            onClick={() => this.jumpTo(move)}
-            onMouseEnter={() => this.showPiecesOnGameBoard(history, move)}
-            onMouseLeave={() => this.hidePiecesOnGameBoard()}
-          >
-            {desc}
-          </button>
-        </li>
-      );
-    });
 
     let status;
     if (winner) {
@@ -174,8 +160,41 @@ class Game extends React.Component {
           <Board squares={current.squares} onClick={i => this.handleClick(i)} />
         </div>
         <div className="game-info">
+          <button onClick={() => this.reverseSort()}>reverse sort</button>
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ul>
+            {history.map((step, move) => {
+              const desc = step.coordinate
+                ? `Go to move (${step.coordinate.y},${step.coordinate.x}) #` +
+                  move
+                : "Go to game start";
+              return (
+                <li key={move}>
+                  <span>
+                    {this.state.isAsc
+                      ? move + 1
+                      : this.state.history.length - move}
+                    .{" "}
+                  </span>
+                  <button
+                    onClick={() =>
+                      this.jumpTo(
+                        this.state.isAsc
+                          ? move
+                          : this.state.history.length - (move + 1)
+                      )
+                    }
+                    onMouseEnter={() =>
+                      this.showPiecesOnGameBoard(history, move)
+                    }
+                    onMouseLeave={() => this.hidePiecesOnGameBoard()}
+                  >
+                    {desc}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     );
