@@ -2,6 +2,7 @@
  * 1.在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)；已完成√
  * 2.在历史记录列表中加粗显示当前选择的项目；已完成√
  * 3.使用两个循环来渲染出棋盘的格子；已完成√
+ * 4.添加一个可以升序或降序显示历史记录的按钮；已完成√
  **/
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -114,7 +115,9 @@ class Game extends React.Component {
 
   jumpTo(step) {
     this.setState({
-      stepNumber: step,
+      stepNumber: this.state.isAsc
+        ? step
+        : this.state.history.length - (step + 1),
       xIsNext: step % 2 === 0
     });
   }
@@ -145,7 +148,7 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = this.state.isAsc
       ? history[this.state.stepNumber]
-      : history[0];
+      : history[history.length - (this.state.stepNumber + 1)];
     const winner = calculateWinner(current.squares);
 
     let status;
@@ -166,7 +169,9 @@ class Game extends React.Component {
             {history.map((step, move) => {
               const desc = step.coordinate
                 ? `Go to move (${step.coordinate.y},${step.coordinate.x}) #` +
-                  move
+                  (this.state.isAsc
+                    ? move
+                    : this.state.history.length - move - 1)
                 : "Go to game start";
               return (
                 <li key={move}>
@@ -177,13 +182,7 @@ class Game extends React.Component {
                     .{" "}
                   </span>
                   <button
-                    onClick={() =>
-                      this.jumpTo(
-                        this.state.isAsc
-                          ? move
-                          : this.state.history.length - (move + 1)
-                      )
-                    }
+                    onClick={() => this.jumpTo(move)}
                     onMouseEnter={() =>
                       this.showPiecesOnGameBoard(history, move)
                     }
