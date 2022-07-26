@@ -3,6 +3,7 @@
  * 2.在历史记录列表中加粗显示当前选择的项目；已完成√
  * 3.使用两个循环来渲染出棋盘的格子；已完成√
  * 4.添加一个可以升序或降序显示历史记录的按钮；已完成√
+ * 5.每当有人获胜时，高亮显示连成一线的 3 颗棋子；已完成√
  **/
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -90,9 +91,9 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = this.state.isAsc ? history[history.length - 1] : history[0];
     const squares = current.squares.slice();
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
+
+    if (calculateWinner(squares) || squares[i]) return;
+
     squares[i] = this.state.xIsNext ? "X" : "O";
     this.setState({
       history: this.state.isAsc
@@ -131,6 +132,10 @@ class Game extends React.Component {
   }
 
   hidePiecesOnGameBoard() {
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const current = this.state.isAsc ? history[history.length - 1] : history[0];
+    const squares = current.squares.slice();
+    if (calculateWinner(squares)) return;
     let elList = document.getElementsByClassName("square");
     for (let i = 0; i < elList.length; i++) {
       elList[i].className = "square";
@@ -154,6 +159,10 @@ class Game extends React.Component {
     let status;
     if (winner) {
       status = "Winner: " + winner;
+      let elList = document.getElementsByClassName("square");
+      elList[winner[0]].className += " win";
+      elList[winner[1]].className += " win";
+      elList[winner[2]].className += " win";
     } else {
       status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
     }
@@ -219,7 +228,8 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      // return squares[a];
+      return lines[i];
     }
   }
   return null;

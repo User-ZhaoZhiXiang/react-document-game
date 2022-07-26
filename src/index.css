@@ -41,6 +41,10 @@ ul {
   font-weight: bold;
 }
 
+.square.win {
+  color: red;
+}
+
 .kbd-navigation .square:focus {
   background: #ddd;
 }
