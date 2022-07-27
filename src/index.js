@@ -4,6 +4,7 @@
  * 3.使用两个循环来渲染出棋盘的格子；已完成√
  * 4.添加一个可以升序或降序显示历史记录的按钮；已完成√
  * 5.每当有人获胜时，高亮显示连成一线的 3 颗棋子；已完成√
+ * 6.当无人获胜时，显示一个平局的消息。已完成√
  **/
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -164,7 +165,20 @@ class Game extends React.Component {
       elList[winner[1]].className += " win";
       elList[winner[2]].className += " win";
     } else {
-      status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
+      let isDogfall = true;
+      current.squares.forEach(i => {
+        if (i === null) {
+          isDogfall = false;
+        }
+      });
+      if (isDogfall) {
+        status = "Dogfall !";
+        setTimeout(() => {
+          alert("Dogfall !");
+        }, 100);
+      } else {
+        status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
+      }
     }
     return (
       <div className="game">
