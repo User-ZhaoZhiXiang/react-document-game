@@ -1,15 +1,12 @@
-/** Bookmarks:
- * 1.在游戏历史记录列表显示每一步棋的坐标，格式为 (列号, 行号)；已完成√
- * 2.在历史记录列表中加粗显示当前选择的项目；已完成√
- * 3.使用两个循环来渲染出棋盘的格子；已完成√
- * 4.添加一个可以升序或降序显示历史记录的按钮；已完成√
- * 5.每当有人获胜时，高亮显示连成一线的 3 颗棋子；已完成√
- * 6.当无人获胜时，显示一个平局的消息。已完成√
- **/
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 
+/** pictures */
+// import xImgWood from "./asset/x_pieces_wood.png";
+// import oImgWood from "./asset/o_pieces_wood.png";
+import xImgColor from "./asset/x_pieces_color.png";
+import oImgColor from "./asset/o_pieces_color.png";
 // class Square extends React.Component {
 //   render() {
 //     return (
@@ -24,10 +21,20 @@ import "./index.css";
 //     );
 //   }
 // }
+function piecesShow(type) {
+  if (type === "X") {
+    return <img src={xImgColor} alt="x" />;
+  } else if (type === "O") {
+    return <img src={oImgColor} alt="o" />;
+  } else {
+    return null;
+  }
+}
+
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
-      {props.value}
+      {piecesShow(props.value)}
     </button>
   );
 }

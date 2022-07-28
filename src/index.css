@@ -33,6 +33,12 @@ ul {
   width: 34px;
 }
 
+.square img {
+  width: 28px;
+  height: 28px;
+  margin: 2px;
+}
+
 .square:focus {
   outline: none;
 }
